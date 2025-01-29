@@ -1,64 +1,56 @@
 package com.min.mpba.service;
 
-
 import com.min.mpba.domain.User;
 import com.min.mpba.exception.UserAlreadyExistsException;
 import com.min.mpba.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import com.min.mpba.util.JwtUtil; // ✅ 패키지 경로 수정
-import com.min.mpba.util.PasswordUtil; // ✅ 패키지 경로 수정
+import com.min.mpba.util.JwtUtil;
+import com.min.mpba.util.PasswordUtil;
 
-import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
-
+import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-
     private final UserRepository userRepository;
     private final PasswordUtil passwordUtil;
     private final JwtUtil jwtUtil;
 
-
-    //로그인
     // ✅ 로그인 처리 및 JWT 발급
     public String authenticateUser(String id, String password) {
         User user = userRepository.loginUser(id);
 
         if (user != null && BCrypt.checkpw(password, user.getPassword())) {
-            return jwtUtil.generateToken(user.getId()); // ✅ JWT 토큰 반환
+            return jwtUtil.generateAccessToken(user.getId());
         } else {
-            return null; // 인증 실패
+            return null;
         }
     }
 
-    // 회원가입
+    // ✅ 회원가입
     public void registerUser(User user) {
-        // 아이디 중복 검사 (숫자 반환)
         if (userRepository.existsById(user.getId()) > 0) {
             throw new UserAlreadyExistsException("이미 존재하는 아이디입니다.");
         }
-
-        // 이메일 중복 검사 (숫자 반환)
         if (userRepository.existsByEmail(user.getEmail()) > 0) {
             throw new UserAlreadyExistsException("이미 존재하는 이메일입니다.");
         }
-
-        // 동일한 이름 + 생년월일을 가진 유저가 존재하는지 검사 (숫자 반환)
         if (userRepository.existsByNameAndBirth(user.getPersName(), user.getBirth()) > 0) {
-
-            throw new UserAlreadyExistsException("동일한 명의에 회원이 이미 존재합니다.");
+            throw new UserAlreadyExistsException("동일한 명의의 회원이 이미 존재합니다.");
         }
 
-        // 비밀번호 Bcrypt 해싱 후 저장
-        user.setPassword(passwordUtil.encryptBcrypt((user.getPassword())));
-
-        // 사용자 저장
+        user.setPassword(passwordUtil.encryptBcrypt(user.getPassword()));
         userRepository.insertUser(user);
+    }
+
+    // ✅ 마지막 로그인 시간 업데이트
+    public void lastLogin(String id) {
+        userRepository.lastLogin(id);
     }
 
     // ✅ ID로 사용자 정보 조회
@@ -66,9 +58,7 @@ public class UserService {
         return userRepository.loginUser(id);
     }
 
-
-    //블랙리스트 토큰
-
+    // ✅ 블랙리스트 토큰 관리
     private final Set<String> blacklist = new HashSet<>();
 
     public void blacklistToken(String token) {
@@ -79,9 +69,22 @@ public class UserService {
         return blacklist.contains(token);
     }
 
+    // ✅ Refresh Token 저장
+    public void updateRefreshToken(String userId, String refreshToken) {
+        userRepository.updateRefreshToken(userId, refreshToken);
+    }
 
+    // ✅ Refresh Token 삭제 (로그아웃 시)
+    public void deleteRefreshToken(String userId) {
+        userRepository.updateRefreshToken(userId, null);
+    }
 
+    // ✅ Refresh Token으로 사용자 조회
+    public Optional<User> findByRefreshToken(String refreshToken) {
+        return userRepository.findByRefreshToken(refreshToken);
+    }
 
-
-
+    public void updateAccessToken(String userId, String accessToken) {
+        userRepository.updateAccessToken(userId, accessToken);
+    }
 }

@@ -1,11 +1,12 @@
 <template>
   <nav class="navbar">
     <div class="nav-left">
-      <RouterLink to="/" class="logo">MyApp</RouterLink>
-      <RouterLink to="/category1">카테고리1</RouterLink>
-      <RouterLink to="/category2">카테고리2</RouterLink>
-      <RouterLink to="/category3">카테고리3</RouterLink>
-      <RouterLink to="/category4">카테고리4</RouterLink>
+      <RouterLink to="/home" class="logo">Angorani</RouterLink>
+      <RouterLink to="/wedding-invitation">모바일청첩장</RouterLink>
+      <RouterLink to="/cafe24-skins">카페24스킨</RouterLink>
+      <RouterLink to="/contact">1:1문의</RouterLink>
+      <RouterLink to="/community">자유게시판</RouterLink>
+      <RouterLink to="/category4">404</RouterLink>
     </div>
 
     <div class="nav-right">
@@ -37,7 +38,7 @@ import AuthButtons from "@/components/AuthButtons.vue"; // ✅ 로그인/로그�
 }
 
 .nav-left a:hover {
-  color: #ff9800;
+  color: #333;
 }
 
 .nav-right {

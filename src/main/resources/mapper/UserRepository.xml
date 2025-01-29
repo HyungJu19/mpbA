@@ -4,52 +4,45 @@
 
 <mapper namespace="com.min.mpba.repository.UserRepository">
 
-    <select id="loginUser"  resultType="com.min.mpba.domain.User">
+    <update id="lastLogin">
+        UPDATE person SET lastLogin = NOW() WHERE id = #{id}
+    </update>
+
+    <select id="loginUser" resultType="com.min.mpba.domain.User">
         SELECT * FROM person WHERE id = #{id}
     </select>
+
     <select id="existsByEmail" resultType="java.lang.Integer">
-        select count(*) from person where email = #{email}
-
+        SELECT count(*) FROM person WHERE email = #{email}
     </select>
+
     <select id="existsById" resultType="java.lang.Integer">
-        select count(*) from person where id = #{id}
-    </select>
-    <select id="existsByNameAndBirth" resultType="java.lang.Integer">
-        select count(*) from person where persName = #{persName} and birth = #{birth}
-    </select>
-    <select id="findById" resultType="com.min.mpba.domain.User">
-        select * from person where id = #{id}
+        SELECT count(*) FROM person WHERE id = #{id}
     </select>
 
+    <select id="existsByNameAndBirth" resultType="java.lang.Integer">
+        SELECT count(*) FROM person WHERE persName = #{persName} AND birth = #{birth}
+    </select>
 
     <insert id="insertUser" parameterType="com.min.mpba.domain.User" useGeneratedKeys="true" keyProperty="no">
-        INSERT INTO person (id
-                         , password
-                         , naverId
-                         , persName
-                         , email
-                         , birth
-                         , profileImage
-                         , age
-                         , gender
-                         , authType
-                         , accessToken
-                         , refreshToken
-                         , created_at
-                         , updated_at)
-        VALUES (#{id}
-               , #{password}
-               , #{naverId}
-               , #{persName}
-               , #{email}, #{birth}
-               , #{profileImage}
-               , #{age}
-               , #{gender}
-               , #{authType}
-               , #{accessToken}
-               , #{refreshToken}
-               , NOW()
-               , NOW()
-               );
+        INSERT INTO person (id, password, naverId, persName, email, birth, profileImage, age, gender, authType,
+                            accessToken, refreshToken, created_at, updated_at)
+        VALUES (#{id}, #{password}, #{naverId}, #{persName}, #{email}, #{birth}, #{profileImage}, #{age},
+                #{gender}, #{authType}, #{accessToken}, #{refreshToken}, NOW(), NOW());
     </insert>
+
+    <!-- ✅ Refresh Token 저장 -->
+    <update id="updateRefreshToken">
+        UPDATE person SET refreshToken = #{refreshToken} WHERE id = #{id}
+    </update>
+    <update id="updateAccessToken">
+        UPDATE person SET accessToken = #{accessToken} WHERE id = #{id}
+
+    </update>
+
+    <!-- ✅ Refresh Token으로 사용자 조회 -->
+    <select id="findByRefreshToken" resultType="com.min.mpba.domain.User">
+        SELECT * FROM person WHERE refreshToken = #{refreshToken}
+    </select>
+
 </mapper>

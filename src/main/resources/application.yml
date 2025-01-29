@@ -21,4 +21,5 @@ server:
 
 jwt:
   secret: your_very_secure_secret_key_that_is_long_enough
-  expiration: 86400000  # 24시간 (밀리초)
+  access-expiration: 900000   # Access Token 만료 시간 (15분 = 900,000ms)
+  refresh-expiration: 604800000  # Refresh Token 만료 시간 (7일 = 604,800,000ms)
