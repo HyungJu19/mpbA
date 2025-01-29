@@ -26,7 +26,7 @@ jobs:
           node-version: 20
 
       # ✅ 4. frontend/mpfA 폴더 존재 여부 확인
-      - name: Check if frontend/mpfA exists
+      - name: Check if fontend/mpfA exists
         run: |
           if [ -d "frontend/mpfA" ]; then
             echo "✅ frontend/mpfA 폴더가 존재합니다."
