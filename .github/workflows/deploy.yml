@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ 2. 저장소 구조 확인 (디버깅)
+      # ✅ 2. GitHub Actions에서 저장소 구조 확인 (디버깅)
       - name: Debugging - Check repo structure
         run: ls -la
         working-directory: ${{ github.workspace }}
@@ -27,7 +27,13 @@ jobs:
 
       # ✅ 4. frontend/mpfA 폴더 존재 여부 확인
       - name: Check if frontend/mpfA exists
-        run: ls -la frontend/mpfA || echo "frontend/mpfA does not exist"
+        run: |
+          if [ -d "frontend/mpfA" ]; then
+            echo "✅ frontend/mpfA 폴더가 존재합니다."
+          else
+            echo "❌ frontend/mpfA 폴더가 없습니다. CI/CD를 중단합니다."
+            exit 1
+          fi
 
       # ✅ 5. Dependencies 설치 (npm)
       - name: Install dependencies
