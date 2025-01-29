@@ -14,23 +14,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ✅ 2. Node.js 설정
+      # ✅ 2. 저장소 구조 확인 (디버깅)
+      - name: Debugging - Check repo structure
+        run: ls -la
+        working-directory: ${{ github.workspace }}
+
+      # ✅ 3. Node.js 설정
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20  # ✅ 현재 사용하는 Node.js 버전과 동일하게 설정
+          node-version: 20
 
-      # ✅ 3. Dependencies 설치 (npm)
+      # ✅ 4. frontend/mpfA 폴더 존재 여부 확인
+      - name: Check if frontend/mpfA exists
+        run: ls -la frontend/mpfA || echo "frontend/mpfA does not exist"
+
+      # ✅ 5. Dependencies 설치 (npm)
       - name: Install dependencies
         run: npm install
-        working-directory: frontend/mpfA  # ✅ 실행 디렉토리 지정
+        working-directory: frontend/mpfA
 
-      # ✅ 4. Vue 프로젝트 빌드 (Vite 사용)
+      # ✅ 6. Vue 프로젝트 빌드 (Vite 사용)
       - name: Build Vue app
         run: npm run build
-        working-directory: frontend/mpfA  # ✅ 실행 디렉토리 지정
+        working-directory: frontend/mpfA
 
-      # ✅ 5. GitHub Pages로 배포 (Vite 프로젝트의 경우)
+      # ✅ 7. GitHub Pages로 배포 (Vite 프로젝트의 경우)
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
