@@ -49,5 +49,6 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # 배포할 브랜치 (GitHub Pages)
-          folder: fontend/mpfA/dist  # ✅ Vite의 빌드 결과 폴더 지정
+          branch: gh-pages
+          folder: frontend/mpfA/dist
+          token: ${{ secrets.GH_TOKEN }}
