@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.min.mpba.repository.UserRepository">
+
+    <select id="loginUser"  resultType="com.min.mpba.domain.User">
+        SELECT * FROM person WHERE id = #{id}
+    </select>
+    <select id="existsByEmail" resultType="java.lang.Integer">
+        select count(*) from person where email = #{email}
+
+    </select>
+    <select id="existsById" resultType="java.lang.Integer">
+        select count(*) from person where id = #{id}
+    </select>
+    <select id="existsByNameAndBirth" resultType="java.lang.Integer">
+        select count(*) from person where persName = #{persName} and birth = #{birth}
+    </select>
+    <select id="findById" resultType="com.min.mpba.domain.User">
+        select * from person where id = #{id}
+    </select>
+
+
+    <insert id="insertUser" parameterType="com.min.mpba.domain.User" useGeneratedKeys="true" keyProperty="no">
+        INSERT INTO person (id
+                         , password
+                         , naverId
+                         , persName
+                         , email
+                         , birth
+                         , profileImage
+                         , age
+                         , gender
+                         , authType
+                         , accessToken
+                         , refreshToken
+                         , created_at
+                         , updated_at)
+        VALUES (#{id}
+               , #{password}
+               , #{naverId}
+               , #{persName}
+               , #{email}, #{birth}
+               , #{profileImage}
+               , #{age}
+               , #{gender}
+               , #{authType}
+               , #{accessToken}
+               , #{refreshToken}
+               , NOW()
+               , NOW()
+               );
+    </insert>
+</mapper>
