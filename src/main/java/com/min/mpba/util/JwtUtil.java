@@ -49,17 +49,25 @@ public class JwtUtil {
     public String validateToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
+                    .setSigningKey(secretKey.getBytes())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            return claims.getSubject();
+
+            String userId = claims.getSubject();
+            System.out.println("✅ [JwtUtil] 토큰에서 추출한 userId: " + userId);
+            return userId;
+
+        } catch (ExpiredJwtException e) {
+            System.out.println("🔴 [JwtUtil] 토큰 만료됨: " + e.getMessage());
+            throw e; // ✅ 예외를 던져 JwtAuthFilter에서 처리할 수 있도록 변경
         } catch (JwtException e) {
-            return null;
+            System.out.println("🔴 [JwtUtil] 유효하지 않은 토큰: " + e.getMessage());
+            throw e; // ✅ 마찬가지로 예외를 던짐
         }
     }
 
-    // ✅ JWT에서 사용자 ID 추출
+
     public String extractUsername(String token) {
         try {
             return Jwts.parserBuilder()
@@ -68,10 +76,16 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
-        } catch (Exception e) {
-            return null;
+        } catch (ExpiredJwtException e) {
+            System.out.println("🔴 [토큰 만료] " + e.getMessage());
+            throw e; // 컨트롤러에서 처리하도록 예외 그대로 던짐
+        } catch (JwtException e) {
+            System.out.println("🔴 [유효하지 않은 토큰] " + e.getMessage());
+            throw e; // 컨트롤러에서 처리하도록 예외 그대로 던짐
         }
     }
+
+
 
     // ✅ Access Token이 만료되었는지 확인
     public boolean isTokenExpired(String token) {

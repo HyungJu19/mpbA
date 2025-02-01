@@ -2,6 +2,8 @@ select * from person;
 select * from role;
 select * from pers_role;
 
+# delete from person where no = 27;
+
 
 select * from person where id ='user001';
 

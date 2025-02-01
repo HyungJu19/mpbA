@@ -1,5 +1,6 @@
 package com.min.mpba.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,7 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 @Configuration
 public class SecurityConfig {
@@ -26,13 +26,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/login", "/user/register").permitAll() // 로그인, 회원가입은 인증 없이 허용
-                        .anyRequest().authenticated() // 그 외 요청은 인증 필요
+                        .requestMatchers("/user/login", "/user/register").permitAll() // 로그인, 회원가입 허용
+                        .anyRequest().authenticated() // 나머지는 인증 필요
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // ✅ JWT 필터 등록
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // ✅ JWT 필터 추가
 
         return http.build();
     }
+
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -45,4 +47,3 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
-

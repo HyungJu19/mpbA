@@ -1,0 +1,11 @@
+/* ✅ 나눔스퀘어 폰트 적용 (기본: Bold) */
+body {
+    font-family: 'NanumSquare', sans-serif;
+    font-weight: 700; /* ✅ 기본 폰트를 Bold로 설정 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+}
+
+

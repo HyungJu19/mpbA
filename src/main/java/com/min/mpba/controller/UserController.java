@@ -5,6 +5,8 @@ import com.min.mpba.domain.UserLoginRequest;
 import com.min.mpba.exception.UserAlreadyExistsException;
 import com.min.mpba.service.UserService;
 import com.min.mpba.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,43 +28,77 @@ public class UserController {
     // ✅ 로그인 (Access Token + Refresh Token 반환)
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginRequest request) {
-        System.out.println(request + "'???'");
+        System.out.println("🟢 [Login] 요청 수신: " + request);
+
+        if (request == null || request.getId() == null || request.getPassword() == null) {
+            System.out.println("❌ [Login] 요청 데이터가 null입니다.");
+            return ResponseEntity.status(400).body("로그인 실패: 요청 데이터가 올바르지 않습니다.");
+        }
 
         String userId = request.getId();
-        String accessToken = userService.authenticateUser(userId, request.getPassword());
+        String password = request.getPassword();
+        System.out.println("🟢 [Login] 입력된 ID: " + userId);
+
+        // ✅ 사용자 인증 시도
+        String accessToken = userService.authenticateUser(userId, password);
 
         if (accessToken != null) {
+            System.out.println("✅ [Login] 사용자 인증 성공 - Access Token 발급됨: " + accessToken);
+
             userService.lastLogin(userId);
 
-            // ✅ Refresh Token 생성 및 `person` 테이블에 저장
+            // ✅ Refresh Token 생성 및 저장
             String refreshToken = jwtUtil.generateRefreshToken(userId);
+            System.out.println("🟢 [Login] 생성된 Refresh Token: " + refreshToken);
+
+            // ✅ Access Token이 유효한지 즉시 검증
+            try {
+                String extractedUserId = jwtUtil.validateToken(accessToken);
+                System.out.println("🟢 [Login] Access Token 검증 성공 - User ID: " + extractedUserId);
+            } catch (JwtException e) {
+                System.out.println("❌ [Login] Access Token 검증 실패: " + e.getMessage());
+                return ResponseEntity.status(500).body("서버 오류: 생성된 토큰이 유효하지 않습니다.");
+            }
+
             userService.updateRefreshToken(userId, refreshToken); // DB에 저장
-            userService.updateAccessToken(userId, accessToken);
+            userService.updateAccessToken(userId, accessToken); // DB에 저장
+
             // ✅ Access Token & Refresh Token 반환
             Map<String, String> tokens = new HashMap<>();
             tokens.put("accessToken", accessToken);
             tokens.put("refreshToken", refreshToken);
+
             return ResponseEntity.ok(tokens);
         } else {
+            System.out.println("❌ [Login] 사용자 인증 실패 - 아이디 또는 비밀번호가 올바르지 않음");
             return ResponseEntity.status(401).body("로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다.");
         }
     }
 
-    // ✅ 로그인한 사용자 정보 조회
-    @GetMapping("/me")
-    public ResponseEntity<User> getUserInfo(@RequestHeader("Authorization") String token) {
-        String jwt = token.replace("Bearer ", "");
-        System.out.println(jwt);
-        System.out.println(token);
-        String userId = jwtUtil.extractUsername(jwt);
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
 
-        User user = userService.getUserById(userId);
-        userService.lastLogin(userId);
-        return ResponseEntity.ok(user);
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String token) {
+        String jwt = token.replace("Bearer ", "");
+
+        try {
+            String userId = jwtUtil.extractUsername(jwt);
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+            }
+
+            User user = userService.getUserById(userId);
+            userService.lastLogin(userId);
+            return ResponseEntity.ok(user);
+
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 만료되었습니다.");
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+        }
     }
+
+
 
     // ✅ 회원가입
     @PostMapping("/register")
