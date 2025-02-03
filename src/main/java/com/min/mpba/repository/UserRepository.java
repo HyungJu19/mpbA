@@ -10,7 +10,7 @@ import java.util.Optional;
 @Mapper
 public interface UserRepository {
 
-    User loginUser(@Param("id") String id);
+    User loginUser(@Param("username") String username);
 
     void insertUser(User user);
 
@@ -18,17 +18,17 @@ public interface UserRepository {
 
     int existsByEmail(@Param("email") String email);
 
-    int existsById(@Param("id") String id);
+    int existsById(@Param("username") String username);
 
-    void lastLogin(@Param("id") String id);
+    void lastLogin(@Param("username") String username);
 
     // ✅ Refresh Token 업데이트
 
-    void updateRefreshToken(@Param("id") String id, @Param("refreshToken") String refreshToken);
+    void updateRefreshToken(@Param("username") String id, @Param("refreshToken") String refreshToken);
 
     // ✅ Refresh Token으로 사용자 조회
 
     Optional<User> findByRefreshToken(@Param("refreshToken") String refreshToken);
 
-    void updateAccessToken(@Param("id") String id, @Param("accessToken") String accessToken);
+    void updateAccessToken(@Param("username") String id, @Param("accessToken") String accessToken);
 }

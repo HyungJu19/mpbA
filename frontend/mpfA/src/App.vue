@@ -1,6 +1,6 @@
 <template>
   <header>
-    <NavbarView />
+    <NavbarView v-if="!hideNavbar" />
   </header>
 
   <main class="content">
@@ -10,27 +10,24 @@
       </transition>
     </router-view>
   </main>
-
-  <!-- ✅ 로그인 모달 추가 -->
-  <LoginForm v-if="showLoginModal" @close="showLoginModal = false" />
 </template>
 
 <script setup>
-import { ref, onMounted, provide } from "vue";
-import { useAuthStore } from "@/stores/useAuthStore.js";
+import {ref, onMounted, computed} from "vue";
+import {useRoute} from "vue-router"; // ✅ 현재 경로 가져오기
+import {useAuthStore} from "@/stores/useAuthStore.js";
 import NavbarView from "@/views/NavbarView.vue";
-import LoginForm from "@/components/LoginForm.vue";
 
 const authStore = useAuthStore();
-const showLoginModal = ref(false); // ✅ 로그인 모달 상태 추가
+const route = useRoute(); // ✅ 현재 경로 가져오기
 
 onMounted(() => {
   console.log("🚀 앱 실행됨: 사용자 정보 불러오기");
   authStore.fetchUser();
 });
 
-// ✅ 로그인 모달 상태를 Provide하여 하위 컴포넌트에서 접근 가능
-provide("showLoginModal", showLoginModal);
+/* ✅ 현재 페이지가 로그인, 회원가입 페이지이면 Navbar 숨기기 */
+const hideNavbar = computed(() => ["/login", "/register"].includes(route.path));
 </script>
 
 <style scoped>

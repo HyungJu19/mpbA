@@ -14,9 +14,9 @@
         </p>
 
         <!-- ✅ 로그인 버튼 -->
-        <button class="btn primary-btn" @click="showLoginModal = true">
+        <RouterLink to="/login" class="btn primary-btn" >
           로그인하기
-        </button>
+        </RouterLink>
 
         <!-- ✅ 회원가입 버튼 -->
         <RouterLink to="/register" class="btn secondary-btn">
@@ -33,17 +33,18 @@
 </template>
 
 <script setup>
-import { inject, onMounted } from "vue";
 
-const showLoginModal = inject("showLoginModal"); // ✅ `App.vue`에서 제공하는 상태 사용
-
-// ✅ 스크롤 방지
-onMounted(() => {
-  document.body.style.overflow = "hidden"; // 🌟 스크롤 막기
-});
 </script>
-
 <style scoped>
+/* ✅ 전체 화면에서 가로 스크롤 방지 */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* ✅ 전체 레이아웃 설정 */
 .login-required-wrapper {
   display: flex;
@@ -52,22 +53,26 @@ onMounted(() => {
   align-items: center;
   min-height: 100dvh; /* ✅ 모바일 주소창 제외한 100% 높이 */
   width: 100vw;
-  overflow: hidden;
-  background: none; /* ✅ 배경색 제거 */
+  overflow: hidden; /* ✅ 가로 스크롤 방지 */
+  position: fixed; /* ✅ 추가: 화면에 고정하여 더 확실하게 방지 */
+  top: 0;
+  left: 0;
+  background: none;
 }
 
 /* ✅ 카드 스타일 (Glassmorphism 효과 적용) */
 .login-required {
-  background: rgba(255, 255, 255, 0.8); /* 반투명 유리 효과 */
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   padding: 40px;
   border-radius: 16px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.15);
   text-align: center;
-  max-width: 400px;
+  max-width: 90vw; /* ✅ 추가: 화면보다 커지지 않도록 제한 */
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.3);
   animation: fadeInUp 0.6s ease-out;
+  box-sizing: border-box; /* ✅ 내부 패딩이 width에 포함되도록 설정 */
 }
 
 /* ✅ 아이콘 스타일 */

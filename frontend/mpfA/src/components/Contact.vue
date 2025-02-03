@@ -42,52 +42,35 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from "vue";
-import {useRouter, useRoute} from "vue-router";
-import {useAuthStore} from "@/stores/useAuthStore.js";
+import { onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "@/stores/useAuthStore.js";
 
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const message = ref("");
-const showLoginModal = ref(false);
 
-// ✅ 로그인 체크 후 리디렉트 처리
+// ✅ 로그인 체크 후 자동 리디렉트
 onMounted(() => {
   if (!authStore.user) {
-    router.push({path: "/login-required", query: {redirect: route.fullPath}});
+    router.replace({ path: "/login-required", query: { redirect: route.fullPath } });
   }
 });
-
-// ✅ 로그인 모달 닫기 처리
-const handleLoginClose = () => {
-  showLoginModal.value = false;
-  if (authStore.user) {
-    router.replace("/contact"); // ✅ 로그인 후 스타일 유지하며 contact 페이지 리로드
-  }
-};
-
-// ✅ 문의 제출 기능 (더미 기능)
-const submitInquiry = () => {
-  if (!message.value.trim()) {
-    alert("문의 내용을 입력해주세요.");
-    return;
-  }
-  alert("문의가 정상적으로 접수되었습니다.");
-  message.value = "";
-};
 </script>
+
 
 <style scoped>
 /* ✅ 전체 컨테이너 */
+
 .contact-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh; /* 🔥 높이를 최소 100vh로 설정 */
   padding: 20px;
-  background: linear-gradient(to bottom, #eceff1, #ffffff); /* 📌 부드러운 배경 */
+  background: linear-gradient(to bottom, #eceff1, #ffffff);
 }
+
 
 /* ✅ 문의 폼 카드 */
 .contact-container {

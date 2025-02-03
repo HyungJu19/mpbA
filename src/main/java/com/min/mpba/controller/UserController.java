@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -30,25 +30,25 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody UserLoginRequest request) {
         System.out.println("🟢 [Login] 요청 수신: " + request);
 
-        if (request == null || request.getId() == null || request.getPassword() == null) {
+        if (request == null || request.getUsername() == null || request.getPassword() == null) {
             System.out.println("❌ [Login] 요청 데이터가 null입니다.");
             return ResponseEntity.status(400).body("로그인 실패: 요청 데이터가 올바르지 않습니다.");
         }
 
-        String userId = request.getId();
+        String username = request.getUsername();
         String password = request.getPassword();
-        System.out.println("🟢 [Login] 입력된 ID: " + userId);
+        System.out.println("🟢 [Login] 입력된 ID: " + username);
 
         // ✅ 사용자 인증 시도
-        String accessToken = userService.authenticateUser(userId, password);
+        String accessToken = userService.authenticateUser(username, password);
 
         if (accessToken != null) {
             System.out.println("✅ [Login] 사용자 인증 성공 - Access Token 발급됨: " + accessToken);
 
-            userService.lastLogin(userId);
+            userService.lastLogin(username);
 
             // ✅ Refresh Token 생성 및 저장
-            String refreshToken = jwtUtil.generateRefreshToken(userId);
+            String refreshToken = jwtUtil.generateRefreshToken(username);
             System.out.println("🟢 [Login] 생성된 Refresh Token: " + refreshToken);
 
             // ✅ Access Token이 유효한지 즉시 검증
@@ -60,8 +60,8 @@ public class UserController {
                 return ResponseEntity.status(500).body("서버 오류: 생성된 토큰이 유효하지 않습니다.");
             }
 
-            userService.updateRefreshToken(userId, refreshToken); // DB에 저장
-            userService.updateAccessToken(userId, accessToken); // DB에 저장
+            userService.updateRefreshToken(username, refreshToken); // DB에 저장
+            userService.updateAccessToken(username, accessToken); // DB에 저장
 
             // ✅ Access Token & Refresh Token 반환
             Map<String, String> tokens = new HashMap<>();
@@ -103,6 +103,8 @@ public class UserController {
     // ✅ 회원가입
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
+
+        System.out.println(user);
         try {
             userService.registerUser(user);
             return ResponseEntity.ok("회원가입 성공");
@@ -136,7 +138,7 @@ public class UserController {
 
             // ✅ Refresh Token이 만료되지 않았는지 확인
             if (user.getRefreshToken().equals(refreshToken)) {
-                String newAccessToken = jwtUtil.generateAccessToken(user.getId());
+                String newAccessToken = jwtUtil.generateAccessToken(user.getUsername());
 
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("accessToken", newAccessToken);

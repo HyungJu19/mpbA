@@ -5,11 +5,11 @@
 <mapper namespace="com.min.mpba.repository.UserRepository">
 
     <update id="lastLogin">
-        UPDATE person SET lastLogin = NOW() WHERE id = #{id}
+        UPDATE person SET lastLogin = NOW() WHERE username = #{username}
     </update>
 
     <select id="loginUser" resultType="com.min.mpba.domain.User">
-        SELECT * FROM person WHERE id = #{id}
+        SELECT * FROM person WHERE username = #{username}
     </select>
 
     <select id="existsByEmail" resultType="java.lang.Integer">
@@ -17,26 +17,26 @@
     </select>
 
     <select id="existsById" resultType="java.lang.Integer">
-        SELECT count(*) FROM person WHERE id = #{id}
+        SELECT count(*) FROM person WHERE username = #{username}
     </select>
 
     <select id="existsByNameAndBirth" resultType="java.lang.Integer">
         SELECT count(*) FROM person WHERE persName = #{persName} AND birth = #{birth}
     </select>
 
-    <insert id="insertUser" parameterType="com.min.mpba.domain.User" useGeneratedKeys="true" keyProperty="no">
-        INSERT INTO person (id, password, naverId, persName, email, birth, profileImage, age, gender, authType,
+    <insert id="insertUser" parameterType="com.min.mpba.domain.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO person (username, password, naverId, persName, email, birth, phone, carrier, profileImage, age, agreement, gender, authType,
                             accessToken, refreshToken, created_at, updated_at)
-        VALUES (#{id}, #{password}, #{naverId}, #{persName}, #{email}, #{birth}, #{profileImage}, #{age},
-                #{gender}, #{authType}, #{accessToken}, #{refreshToken}, NOW(), NOW());
+        VALUES (#{username}, #{password}, #{naverId}, #{persName}, #{email}, #{birth}, #{phone}, #{carrier}, #{profileImage}, #{age},
+                #{agreement}, #{gender}, #{authType}, #{accessToken}, #{refreshToken}, NOW(), NOW());
     </insert>
 
     <!-- ✅ Refresh Token 저장 -->
     <update id="updateRefreshToken">
-        UPDATE person SET refreshToken = #{refreshToken} WHERE id = #{id}
+        UPDATE person SET refreshToken = #{refreshToken} WHERE username = #{username}
     </update>
     <update id="updateAccessToken">
-        UPDATE person SET accessToken = #{accessToken} WHERE id = #{id}
+        UPDATE person SET accessToken = #{accessToken} WHERE username = #{username}
 
     </update>
 

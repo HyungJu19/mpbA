@@ -24,12 +24,11 @@
               <RouterLink to="/profile" class="nav-link user-id" style="margin-right: 5px">
                 내정보변경
               </RouterLink>
-
               <button class="nav-link logout-btn" @click="handleLogout">로그아웃</button>
             </template>
             <template v-else>
-              <button class="nav-link login" @click="showLoginModal = true" style="margin-right: 10px">Login</button>
-              <RouterLink to="/register" class="nav-link register">SignUp</RouterLink>
+              <RouterLink to="/login" class="nav-link login" @click="closeMenu" style="margin-right: 10px">login</RouterLink>
+              <RouterLink to="/register" class="nav-link register" @click="closeMenu">SignUp</RouterLink>
             </template>
           </div>
         </transition>
@@ -44,8 +43,8 @@
         </button>
         <div class="mobile-dropdown" :class="{ open: menuOpen }">
           <template v-if="!authStore.user">
-            <button class="nav-link login" @click="showLoginModal = true">Login</button>
-            <RouterLink to="/register" class="nav-link register">Sign Up</RouterLink>
+            <RouterLink to="login" class="nav-link login" @click="closeMenu">login</RouterLink>
+            <RouterLink to="/register" class="nav-link register" @click="closeMenu">Sign Up</RouterLink>
           </template>
           <template v-if="authStore.user">
             <div>{{ authStore.user.persName }}님 환영합니다.</div>
@@ -56,7 +55,7 @@
           <RouterLink to="/contact" class="nav-link" @click="closeMenu">1:1 문의</RouterLink>
           <RouterLink to="/products" class="nav-link" @click="closeMenu">상세페이지</RouterLink>
           <template v-if="authStore.user">
-          <button class="nav-link logout-btn" @click="handleLogout">로그아웃</button>
+            <button class="nav-link logout-btn" @click="handleLogout">로그아웃</button>
           </template>
         </div>
       </div>
@@ -66,12 +65,11 @@
 
 <script setup>
 import { useAuthStore } from "@/stores/useAuthStore.js";
-import { ref, onMounted, onUnmounted, inject } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 const authStore = useAuthStore();
 const isMobile = ref(window.innerWidth <= 991);
 const menuOpen = ref(false);
-const showLoginModal = inject("showLoginModal"); // ✅ `App.vue`에서 전역 제공된 상태 사용
 
 // ✅ 반응형 체크
 const updateScreenSize = () => {
@@ -88,20 +86,40 @@ const closeMenu = () => {
   menuOpen.value = false;
 };
 
+// ✅ 바깥 클릭 시 닫기 기능 추가
+const handleOutsideClick = (event) => {
+  const menuDropdown = document.querySelector(".mobile-dropdown");
+  const hamburgerBtn = document.querySelector(".hamburger");
+
+  if (
+      menuOpen.value &&
+      menuDropdown &&
+      !menuDropdown.contains(event.target) && // 메뉴 내부 클릭 제외
+      !hamburgerBtn.contains(event.target) // 햄버거 버튼 클릭 제외
+  ) {
+    closeMenu();
+  }
+};
+
 // ✅ 로그아웃 처리
 const handleLogout = () => {
   authStore.logout();
   closeMenu();
 };
 
-// ✅ 이벤트 리스너 추가
+// ✅ 이벤트 리스너 추가 및 해제
 onMounted(() => {
   window.addEventListener("resize", updateScreenSize);
+  window.addEventListener("click", handleOutsideClick); // ✅ 바깥 클릭 감지
 });
+
 onUnmounted(() => {
   window.removeEventListener("resize", updateScreenSize);
+  window.removeEventListener("click", handleOutsideClick); // ✅ 이벤트 제거
 });
 </script>
+
+
 
 <style scoped>
 /* ✅ 전체 헤더 스타일 */

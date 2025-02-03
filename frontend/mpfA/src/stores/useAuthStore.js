@@ -17,9 +17,9 @@ export const useAuthStore = defineStore("auth", {
         },
 
         // ✅ 로그인 (JWT 저장 + 사용자 정보 저장)
-        async login(id, password) {
+        async login(username, password) {
             try {
-                const response = await axios.post("/api/user/login", { id, password });
+                const response = await axios.post("/user/login", { username, password });
 
                 // ✅ Access Token & Refresh Token 저장
                 this.accessToken = response.data.accessToken;
@@ -54,7 +54,7 @@ export const useAuthStore = defineStore("auth", {
             }
 
             try {
-                const response = await axios.get("/api/user/me", {
+                const response = await axios.get("/user/me", {
                     headers: { Authorization: `Bearer ${this.accessToken}` },
                 });
 
@@ -83,7 +83,7 @@ export const useAuthStore = defineStore("auth", {
         // ✅ 회원가입 (백엔드 메시지 반환)
         async register(user) {
             try {
-                const response = await axios.post("/api/user/register", user);
+                const response = await axios.post("/user/register", user);
                 return { success: true, message: response.data };
             } catch (error) {
                 if (error.response && error.response.data) {

@@ -1,25 +1,39 @@
 spring:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  messages:
+    basename: messages
+    encoding: UTF-8
   application:
     name: m_A_b
-
+  web:
+    resources:
+      static-locations: classpath:/static/  # 📌 Vue 빌드된 파일을 절대 경로로 설정
+      cache:
+        period: 3600  # 캐시 설정 (1시간)
+  mvc:
+    static-path-pattern: /**
   datasource:
-    url: jdbc:mysql://localhost:3306/mpbAdb
-    username: mino1
+    url: jdbc:mysql://localhost:3306/mpbAdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
     password: 910309
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-
 mybatis:
-    mapper-locations: classpath:mapper/*.xml
-    configuration:
-      map-underscore-to-camel-case: true
-
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    jdbc-type-for-null: NULL
 
 server:
+  address: 0.0.0.0
   port: 8081
-
-
+  tomcat:
+    uri-encoding: UTF-8
 jwt:
   secret: your_very_secure_secret_key_that_is_long_enough
-  access-expiration: 60000   # Access Token 만료 시간 (15분 = 900,000ms)
-  refresh-expiration: 60000  # Refresh Token 만료 시간 (7일 = 604,800,000ms)
+  access-expiration: 60000   # Access Token 만료 시간 (15분)
+  refresh-expiration: 60000  # Refresh Token 만료 시간 (7일)
