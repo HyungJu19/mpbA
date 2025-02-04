@@ -32,7 +32,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 
-// 40개의 더미 카드 생성
+// 카드 데이터 생성
 const cards = ref(
     Array.from({ length: 20 }, (_, i) => ({
       title: `Card Title ${i + 1}`,
@@ -41,22 +41,17 @@ const cards = ref(
     }))
 );
 
-// 화면 크기에 따라 표시할 카드 계산
+// 화면 크기에 따라 표시할 카드 개수 결정
 const windowWidth = ref(window.innerWidth);
 const visibleCards = computed(() => {
-  if (windowWidth.value > 899) {
-    return cards.value; // 900px 이상: 모든 카드(40개) 표시
-  } else {
-    return cards.value.slice(0, 4); // 899px 이하: 첫 4개만 표시
-  }
+  return windowWidth.value > 899 ? cards.value : cards.value.slice(0, 4);
 });
 
-// 화면 크기 변경 감지
+// 창 크기 변경 감지
 const updateWindowWidth = () => {
   windowWidth.value = window.innerWidth;
 };
 
-// 이벤트 리스너 등록 및 해제
 onMounted(() => {
   window.addEventListener("resize", updateWindowWidth);
 });
@@ -71,39 +66,72 @@ const getImagePath = (imageName) => {
 </script>
 
 <style scoped>
-/* ✅ 전체 컨테이너 */
+/* ✅ 전체 페이지 가로 스크롤 방지 */
+html, body {
+  overflow-x: hidden;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+/* ✅ 중앙 정렬을 위한 컨테이너 */
 .container {
   width: 100%;
+  max-width: 1200px; /* ✅ 최대 너비 제한 */
+  margin: 0 auto; /* ✅ 중앙 정렬 */
   padding: 20px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
-
-.card-mainTitle{
+/* ✅ 카드 제목 */
+.card-mainTitle {
   height: 300px;
-  align-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   width: 100%;
   margin-bottom: 50px;
-
-  text-align: center;
 }
+
+@media (max-width: 991px) {
+  .card-mainTitle {
+    height: 200px;
+  }
+}
+
 /* ✅ 그리드 레이아웃 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* ✅ 기본 4개 */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* ✅ 반응형 */
   gap: 15px;
+  justify-content: center; /* ✅ 중앙 정렬 */
+  max-width: 100%;
+  width: 100%;
 }
 
 @media (max-width: 899px) {
   .grid {
-    grid-template-columns: 1fr; /* ✅ 899px 이하: 한 행에 하나 */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* ✅ 모바일에서도 중앙 정렬 유지 */
   }
+}
+
+/* ✅ 개별 카드 */
+.grid-item {
+  display: flex;
+  justify-content: center; /* ✅ 카드 개별 중앙 정렬 */
+  width: 100%;
+  max-width: 300px;
 }
 
 /* ✅ 카드 스타일 */
 .card {
   width: 100%;
-  aspect-ratio: 550 / 330; /* ✅ 직사각형 비율 유지 */
+  aspect-ratio: 550 / 330;
   background: white;
   border-radius: 8px;
   overflow: hidden;
@@ -130,14 +158,14 @@ const getImagePath = (imageName) => {
   object-fit: cover;
 }
 
-/* ✅ 오버레이 스타일 (호버 시 나타남) */
+/* ✅ 카드 오버레이 */
 .card-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7); /* ✅ 어두운 오버레이 */
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -151,7 +179,7 @@ const getImagePath = (imageName) => {
   opacity: 1;
 }
 
-/* ✅ 제목 스타일 */
+/* ✅ 카드 타이틀 */
 .card-title {
   font-size: 1.5rem;
   font-weight: bold;
@@ -159,7 +187,7 @@ const getImagePath = (imageName) => {
   text-align: center;
 }
 
-/* ✅ 설명 스타일 */
+/* ✅ 카드 설명 */
 .card-text {
   font-size: 1rem;
   text-align: center;
@@ -167,21 +195,12 @@ const getImagePath = (imageName) => {
   padding: 0 20px;
 }
 
-
 /* ✅ 구분선 */
 .separator {
-
   width: 80%;
   margin: 80px auto;
   border: none;
   height: 2px;
   background: #ddd;
-}
-
-
-@media (max-width: 991px) {
-  .card-mainTitle {
-    height: 200px;
-  }
 }
 </style>

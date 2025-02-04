@@ -11,10 +11,7 @@ export const useAuthStore = defineStore("auth", {
     }),
 
     actions: {
-        // ✅ 모달을 Pinia 스토어에서 제어할 수 있도록 등록
-        setAuthModal(modalInstance) {
-            this.authModal = modalInstance;
-        },
+
 
         // ✅ 로그인 (JWT 저장 + 사용자 정보 저장)
         async login(username, password) {

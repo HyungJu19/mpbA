@@ -18,7 +18,7 @@ const router = useRouter();
 // ✅ 로그인 상태면 자동 이동
 watchEffect(() => {
   if (authStore.accessToken && authStore.user) {
-    router.push("/mypage");
+    router.push("/home");
   }
 });
 </script>

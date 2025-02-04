@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <div class="content-wrapper">
-      <!-- ✅ 왼쪽 회전 카드 -->
-      <div class="flip-card">
-        <div class="flip-card-inner">
+      <!-- ✅ 1000px 이하에서만 터치 이벤트 작동 -->
+      <div class="flip-card" @click="toggleFlip" @touchstart="toggleFlip">
+        <div class="flip-card-inner" :class="{ flipped: isFlipped }">
           <!-- 앞면 -->
           <div class="flip-card-front">
             <h3>Card Title</h3>
@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <!-- ✅ 오른쪽 컨텐츠 (2개씩 배치) -->
+      <!-- ✅ 오른쪽 컨텐츠 -->
       <div class="right-content">
         <div class="content-grid">
           <div v-for="(item, index) in contents" :key="index" class="content-item">
@@ -35,30 +35,51 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
-// 오른쪽 컨텐츠 4개 데이터
+const isFlipped = ref(false);
+let flipTimeout = null;
+
+// ✅ 터치 이벤트 핸들러 (1000px 이하에서만 클릭/터치 동작)
+const toggleFlip = () => {
+  if (window.innerWidth > 1000) return; // ✅ PC에서는 클릭 이벤트 차단
+
+  if (flipTimeout) {
+    clearTimeout(flipTimeout); // ✅ 기존 타이머 제거
+    flipTimeout = null; // ✅ 초기화
+  }
+
+  isFlipped.value = true; // ✅ 카드 회전
+
+  flipTimeout = setTimeout(() => {
+    isFlipped.value = false; // ✅ 4초 후 원래 상태로 복귀
+  }, 2000);
+};
+
+// ✅ 창 크기 변경 감지 (모바일 환경에서만 이벤트 활성화)
+const handleResize = () => {
+  if (window.innerWidth > 1000) {
+    isFlipped.value = false;
+    if (flipTimeout) {
+      clearTimeout(flipTimeout);
+      flipTimeout = null;
+    }
+  }
+};
+
+// ✅ 이벤트 리스너 추가 및 제거
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
 const contents = ref([
-  {
-    icon: "⭐",
-    title: "Feature One",
-    description: "This is the first feature description.",
-  },
-  {
-    icon: "🚀",
-    title: "Feature Two",
-    description: "This is the second feature description.",
-  },
-  {
-    icon: "🔒",
-    title: "Feature Three",
-    description: "This is the third feature description.",
-  },
-  {
-    icon: "⚡",
-    title: "Feature Four",
-    description: "This is the fourth feature description.",
-  },
+  { icon: "⭐", title: "Feature One", description: "This is the first feature description." },
+  { icon: "🚀", title: "Feature Two", description: "This is the second feature description." },
+  { icon: "🔒", title: "Feature Three", description: "This is the third feature description." },
+  { icon: "⚡", title: "Feature Four", description: "This is the fourth feature description." },
 ]);
 </script>
 
@@ -72,9 +93,10 @@ const contents = ref([
   display: flex;
   justify-content: center; /* ✅ 중앙 정렬 */
   perspective: 1200px; /* ✅ 3D 회전 효과 */
+  box-sizing: border-box;
 }
 
-/* ✅ 컨텐츠 배치 (회전 카드 + 오른쪽 컨텐츠) */
+/* ✅ 컨텐츠 배치 */
 .content-wrapper {
   display: flex;
   align-items: center;
@@ -88,12 +110,16 @@ const contents = ref([
   }
 }
 
-/* ✅ 회전 카드 스타일 (앞뒤 크기 동일) */
+/* ✅ 회전 카드 */
 .flip-card {
   width: 300px;
   height: 400px;
   position: relative;
-  overflow: hidden; /* ✅ 내부 크기 초과 방지 */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 /* ✅ 내부 카드 (회전) */
@@ -102,14 +128,24 @@ const contents = ref([
   height: 100%;
   transform-style: preserve-3d;
   transition: transform 0.6s ease;
-  transform-origin: center center; /* ✅ 중앙 정렬 */
+  transform-origin: center center;
 }
 
-.flip-card:hover .flip-card-inner {
-  transform: rotateY(180deg);
+/* ✅ PC(1000px 이상)에서는 hover 시 회전 */
+@media (min-width: 1000px) {
+  .flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+  }
 }
 
-/* ✅ 앞면 & 뒷면 (크기 문제 해결) */
+/* ✅ 모바일(1000px 이하)에서는 터치/클릭 시 회전 */
+@media (max-width: 1000px) {
+  .flipped {
+    transform: rotateY(180deg);
+  }
+}
+
+/* ✅ 카드 앞면 & 뒷면 */
 .flip-card-front,
 .flip-card-back {
   width: 100%;
@@ -126,7 +162,7 @@ const contents = ref([
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  box-sizing: border-box; /* ✅ 크기 초과 문제 해결 */
+  box-sizing: border-box;
 }
 
 .flip-card-front {
@@ -139,15 +175,6 @@ const contents = ref([
   color: white;
   transform: rotateY(180deg);
 }
-/*회전카드 디버깅용
-.flip-card {
-  border: 2px solid blue;
-}
-
-.flip-card-front, .flip-card-back {
-  border: 2px solid red;
-}*/
-
 
 /* ✅ 버튼 스타일 */
 .btn {
@@ -183,6 +210,17 @@ const contents = ref([
 @media (max-width: 1000px) {
   .content-grid {
     grid-template-columns: 1fr; /* ✅ 1000px 이하: 세로 1열 */
+  }
+  .flip-card {
+    width: 100%; /* ✅ 화면 너비에 맞게 */
+    display: flex;
+    justify-content: center;
+  }
+
+  .right-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 

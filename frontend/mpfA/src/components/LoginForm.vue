@@ -58,7 +58,7 @@ const route = useRoute();
 const handleLogin = async () => {
   const success = await authStore.login(username.value, password.value);
   if (success) {
-    const redirectPath = route.query.redirect || "/mypage";
+    const redirectPath = route.query.redirect || "/home";
     router.push(redirectPath);
   } else {
     errorMessage.value = "이메일 또는 비밀번호가 올바르지 않습니다.";
@@ -249,7 +249,7 @@ html, body {
   .login-card {
     padding: 30px;
     max-width: 90vw;
-    max-height: 75vh;
+    max-height: 700px;
   }
 
   .btn {

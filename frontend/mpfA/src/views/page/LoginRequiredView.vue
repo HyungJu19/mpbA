@@ -2,7 +2,7 @@
   <div class="login-required-wrapper">
     <transition name="fade-slide">
       <div class="login-required">
-        <!-- 🔒 아이콘 추가 -->
+        <!-- 🔒 아이콘 -->
         <div class="icon-container">
           <i class="material-icons lock-icon">lock</i>
         </div>
@@ -13,66 +13,48 @@
           계정이 없으신가요? 지금 바로 가입하세요!
         </p>
 
-        <!-- ✅ 로그인 버튼 -->
-        <RouterLink to="/login" class="btn primary-btn" >
-          로그인하기
-        </RouterLink>
+        <div class="button-group">
+          <!-- ✅ 로그인 버튼 -->
+          <RouterLink to="/login" class="btn primary-btn">로그인하기</RouterLink>
 
-        <!-- ✅ 회원가입 버튼 -->
-        <RouterLink to="/register" class="btn secondary-btn">
-          회원가입
-        </RouterLink>
+          <!-- ✅ 회원가입 버튼 -->
+          <RouterLink to="/register" class="btn secondary-btn">회원가입</RouterLink>
+        </div>
 
         <!-- ✅ 홈으로 돌아가기 -->
-        <RouterLink to="/" class="home-link">
-          ⬅ 홈으로 돌아가기
-        </RouterLink>
+        <RouterLink to="/" class="home-link">⬅ 홈으로 돌아가기</RouterLink>
       </div>
     </transition>
   </div>
 </template>
 
 <script setup>
-
 </script>
-<style scoped>
-/* ✅ 전체 화면에서 가로 스크롤 방지 */
-html, body {
-  overflow-x: hidden;
-  max-width: 100vw;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
 
-/* ✅ 전체 레이아웃 설정 */
+<style scoped>
+/* ✅ 전체 배경 */
 .login-required-wrapper {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100dvh; /* ✅ 모바일 주소창 제외한 100% 높이 */
-  width: 100vw;
-  overflow: hidden; /* ✅ 가로 스크롤 방지 */
-  position: fixed; /* ✅ 추가: 화면에 고정하여 더 확실하게 방지 */
-  top: 0;
-  left: 0;
-  background: none;
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(to right, #eceff1, #ffffff); /* ✅ 로그인 페이지와 동일한 배경 */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-/* ✅ 카드 스타일 (Glassmorphism 효과 적용) */
+/* ✅ 로그인 카드 스타일 */
 .login-required {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
+  background: white;
   padding: 40px;
   border-radius: 16px;
   box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.15);
-  text-align: center;
-  max-width: 90vw; /* ✅ 추가: 화면보다 커지지 않도록 제한 */
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  max-width: 400px;
+  text-align: center;
+  box-sizing: border-box;
   animation: fadeInUp 0.6s ease-out;
-  box-sizing: border-box; /* ✅ 내부 패딩이 width에 포함되도록 설정 */
 }
 
 /* ✅ 아이콘 스타일 */
@@ -85,65 +67,71 @@ html, body {
 
 .lock-icon {
   font-size: 40px;
-  color: #007bff;
+  color: #ff5e57; /* ✅ 로그인 페이지와 컬러 통일 */
 }
 
 /* ✅ 제목 스타일 */
 .title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
-  color: #2c3e50;
+  color: #333;
   margin-bottom: 10px;
 }
 
-/* ✅ 설명 스타일 */
+/* ✅ 설명 */
 .description {
-  font-size: 16px;
-  color: #555;
+  font-size: 15px;
+  color: #666;
   margin-bottom: 20px;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
-/* ✅ 버튼 기본 스타일 */
+/* ✅ 버튼 그룹 */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ✅ 버튼 스타일 */
 .btn {
-  display: block;
-  width: 100%;
-  padding: 12px;
   font-size: 16px;
   font-weight: bold;
-  text-align: center;
+  padding: 12px;
+  width: 100%;
+  border: none;
   border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
   transition: all 0.3s ease-in-out;
   text-decoration: none;
-  margin-bottom: 12px;
-  cursor: pointer;
   box-sizing: border-box;
-  border: none;
 }
 
-/* ✅ 로그인 버튼 */
+/* ✅ 로그인 버튼 (빨간색) */
 .primary-btn {
-  background: linear-gradient(to right, #007bff, #00c6ff);
+  background: #ff5e57;
   color: white;
 }
 
 .primary-btn:hover {
-  background: linear-gradient(to right, #0056b3, #00a2ff);
+  background: #e04e47;
   transform: translateY(-2px);
-  box-shadow: 0px 5px 15px rgba(0, 123, 255, 0.4);
+  box-shadow: 0px 4px 10px rgba(255, 94, 87, 0.3);
 }
 
-/* ✅ 회원가입 버튼 */
+/* ✅ 회원가입 버튼 (회색) */
 .secondary-btn {
-  background: white;
-  color: #007bff;
-  border: 2px solid #007bff;
-  padding: 10px;
+  background: #f5f5f5;
+  color: #333;
+  text-align: center;
 }
 
 .secondary-btn:hover {
-  background: #007bff;
-  color: white;
+  background: #ddd;
 }
 
 /* ✅ 홈으로 돌아가기 */
@@ -151,14 +139,14 @@ html, body {
   display: block;
   margin-top: 15px;
   font-size: 14px;
-  color: #555;
+  color: #007bff;
   font-weight: bold;
   text-decoration: none;
   transition: color 0.3s ease-in-out;
 }
 
 .home-link:hover {
-  color: #007bff;
+  color: #0056b3;
 }
 
 /* ✅ 애니메이션 */

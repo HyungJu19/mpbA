@@ -1,11 +1,11 @@
 <template>
   <div class="register-container">
     <div class="register-card">
-      <div class="header-logo">
-        <RouterLink to="/home" class="logo">Angorani</RouterLink>
+      <div class="header-logo" style="padding-top: 20px">
+        <RouterLink to="/home" class="logo" >Angorani</RouterLink>
       </div>
 
-      <h2 class="register-title">회원가입</h2>
+
 
       <form @submit.prevent="handleRegister">
 
@@ -217,7 +217,7 @@ html, body {
   top: 0;
   left: 0;
   background: linear-gradient(to right, #eceff1, #ffffff);
-  padding: 20px;
+  padding: 10px;
   box-sizing: border-box;
 }
 
@@ -435,9 +435,9 @@ html, body {
 /* ✅ 반응형 */
 @media (max-width: 768px) {
   .register-card {
-    padding: 30px;
-    max-width: 90vw;
-    max-height: 75vh;
+    padding: 20px;
+    max-width: 99vw;
+    max-height: 800px;
   }
 }
 </style>
