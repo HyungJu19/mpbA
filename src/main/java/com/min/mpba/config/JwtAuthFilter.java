@@ -17,6 +17,8 @@ import com.min.mpba.util.JwtUtil;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -34,8 +36,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 // ✅ 요청과 응답의 인코딩을 UTF-8로 강제 설정
         request.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        System.out.println("🟢 [JwtAuthFilter] 요청 감지됨: " + request.getRequestURI());
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        System.out.println("🟢 [JwtAuthFilter] 요청 감지됨: "
+                + request.getRequestURI()
+                + " | IP: " + request.getRemoteAddr()
+                + " | 시간: " + LocalDateTime.now().format(formatter));
         // ✅ Authorization 헤더 가져오기
         String token = request.getHeader("Authorization");
 

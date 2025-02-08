@@ -1,6 +1,19 @@
 <template>
-  <div class="component-box">
-    <h3>달력</h3>
-    <p>날짜 선택 기능 예정</p>
+  <div class="event-calendar">
+    <h3>📅 예식 일정</h3>
+    <p>예식 날짜: {{ weddingDate }}</p>
   </div>
 </template>
+
+<script setup>
+import { ref } from "vue";
+
+const weddingDate = ref("2025년 5월 20일 (토요일)");
+</script>
+
+<style scoped>
+.event-calendar {
+  padding: 10px;
+
+}
+</style>

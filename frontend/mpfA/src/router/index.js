@@ -8,31 +8,37 @@ import Cafe24SkinView from "@/views/page/Cafe24SkinView.vue";
 import ContactView from "@/views/page/ContactView.vue";
 import CommunityView from "@/views/page/CommunityView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
-import Preview from "@/components/wedding/Preview.vue";
 import LoginRequiredView from "@/views/page/LoginRequiredView.vue";
 import ProductDetail from "@/components/ProductDetail.vue";
 import ProductList from "@/components/ProductList.vue";
+import Angorani from "@/components/wedding/Angorani.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: "/", component: HomeView },
-    { path: "/login", component: LoginView },
-    { path: "/register", component: SignupView },
-    { path: "/home", component: HomeView },
+    { path: "/", component: HomeView }, // ✅ 홈
+    { path: "/login", component: LoginView }, // ✅ 로그인
+    { path: "/register", component: SignupView }, // ✅ 회원가입
+    { path: "/home", component: HomeView }, // ✅ 홈 (중복 허용)
     { path: "/wedding-invitation", component: WeddingInvitationView }, // ✅ 모바일 청첩장
+
+    // ✅ 청첩장 (미리보기 & 저장된 초대장)
+    { path: "/angorani", component: Angorani, props: true }, // ✅ 미리보기
+    { path: "/angorani/:id", component: Angorani, props: true }, // ✅ 저장된 청첩장 보기
+
     { path: "/cafe24-skins", component: Cafe24SkinView }, // ✅ 카페24 스킨
+    { path: "/community", component: CommunityView }, // ✅ 자유게시판
+    { path: "/products", component: ProductList }, // ✅ 제품 목록
+    { path: "/product/:id", component: ProductDetail, props: true }, // ✅ 제품 상세
+
     {
       path: "/contact",
       component: ContactView,
       meta: { requiresAuth: true }  // ✅ 로그인 필요
     },
-    { path: "/community", component: CommunityView }, // ✅ 자유게시판
     { path: "/login-required", component: LoginRequiredView }, // ✅ 로그인 필요 페이지
-    { path: "/preview", name: "Preview", component: Preview },
+
     { path: "/:pathMatch(.*)*", component: NotFoundView }, // ✅ 404 페이지
-    { path: "/products", component: ProductList },
-    { path: "/product/:id", component: ProductDetail, props: true }, // ✅ 상세 페이지 추가
   ],
 });
 
