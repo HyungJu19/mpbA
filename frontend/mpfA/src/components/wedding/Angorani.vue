@@ -1,7 +1,5 @@
 <template>
   <div class="preview-container">
-<!--    <h2 v-if="authStore.user?.persName">{{ authStore.user.persName }}님 청첩장</h2>-->
-<!--    <h2 v-else>청첩장</h2>-->
     <h2>청첩장</h2>
 
     <!-- ✅ 데이터가 없을 경우 안내 메시지 -->
@@ -12,19 +10,20 @@
       <component
           v-if="getComponent(component.type)"
           :is="getComponent(component.type)"
-          v-model="component.data.value"  /> <!-- ✅ `v-model` 적용 -->
-
+          v-model="component.data.value"
+      />
     </div>
 
     <!-- ✅ 뒤로 가기 버튼 -->
     <button class="back-btn" @click="goBack">뒤로 가기</button>
   </div>
 </template>
+
 <script setup>
 import { useRouter } from "vue-router";
 import { usePreviewStore } from "@/stores/usePreviewStore.js";
 import { storeToRefs } from "pinia";
-import { onMounted, ref } from "vue";
+import { onMounted, markRaw } from "vue";
 import RepresentativeImage from "@/components/wedding/RepresentativeImage.vue";
 import SmallImageGrid from "@/components/wedding/SmallImageGrid.vue";
 import TextEditor from "@/components/wedding/TextEditor.vue";
@@ -36,41 +35,29 @@ const router = useRouter();
 const previewStore = usePreviewStore();
 const { componentList } = storeToRefs(previewStore);
 
-// ✅ 동적 컴포넌트 매핑
+// ✅ 동적 컴포넌트 매핑 (markRaw 적용)
 const componentRegistry = {
-  RepresentativeImage,
-  SmallImageGrid,
-  TextEditor,
-  BankInfo,
-  LocationMap,
-  EventCalendar,
-};
-
-// ✅ `localStorage`에서 데이터 불러오기
-const loadFromLocalStorage = () => {
-  const savedData = localStorage.getItem("componentList");
-  if (savedData) {
-    componentList.value = JSON.parse(savedData);
-    console.log("📌 로컬스토리지에서 데이터 복구 완료:", componentList.value);
-  }
+  RepresentativeImage: markRaw(RepresentativeImage),
+  SmallImageGrid: markRaw(SmallImageGrid),
+  TextEditor: markRaw(TextEditor),
+  BankInfo: markRaw(BankInfo),
+  LocationMap: markRaw(LocationMap),
+  EventCalendar: markRaw(EventCalendar),
 };
 
 // ✅ 올바른 컴포넌트를 반환하는 함수
-const getComponent = (type) => {
-  return componentRegistry[type] || null;
-};
-
-// ✅ 미리보기 페이지가 로드될 때 `localStorage`에서 데이터 불러오기
-onMounted(() => {
-  loadFromLocalStorage();
-});
+const getComponent = (type) => componentRegistry[type] || null;
 
 // ✅ 뒤로 가기 버튼
 const goBack = () => {
   router.back();
 };
-</script>
 
+// ✅ `onMounted()`에서 Pinia 데이터 확인
+onMounted(() => {
+  console.log("📌 Pinia에서 불러온 미리보기 데이터:", componentList.value);
+});
+</script>
 
 <style scoped>
 .preview-container {

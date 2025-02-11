@@ -17,7 +17,7 @@
     </transition>
   </div>
 </template>
-
+<!-- ✅ AddButton.vue -->
 <script setup>
 import { ref, defineEmits } from "vue";
 
@@ -30,7 +30,7 @@ const availableComponents = [
   { type: "TextEditor", label: "글쓰기" },
   { type: "BankInfo", label: "전하실 곳" },
   { type: "LocationMap", label: "오시는 곳" },
-  { type: "EventCalendar", label: "달력" }
+  { type: "EventCalendar", label: "달력" },
 ];
 
 // ✅ 추가 버튼 토글
@@ -38,8 +38,9 @@ const toggleMenu = () => {
   showMenu.value = !showMenu.value;
 };
 
-// ✅ 컴포넌트 추가 이벤트 발생
+// ✅ 컴포넌트 추가 이벤트 발생 (콘솔로 확인)
 const handleAdd = (type) => {
+  console.log(`📌 추가 이벤트 발생: ${type}`);
   emit("add-component", type);
   showMenu.value = false;
 };

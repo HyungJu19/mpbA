@@ -12,6 +12,7 @@
         <RouterLink to="/cafe24-skins" class="nav-link">DesignSkin</RouterLink>
         <RouterLink to="/products" class="nav-link">DetailPage</RouterLink>
         <RouterLink to="/wedding-invitation" class="nav-link">WeddingLetter</RouterLink>
+        <RouterLink to="/weddingView" class="nav-link">wedding</RouterLink>
         <RouterLink to="/contact" class="nav-link">Support</RouterLink>
       </nav>
 
@@ -51,6 +52,7 @@
             <RouterLink to="/profile" class="nav-link user-id" @click="closeMenu">내정보변경</RouterLink>
           </template>
           <RouterLink to="/wedding-invitation" class="nav-link" @click="closeMenu">모바일청첩장</RouterLink>
+          <RouterLink to="/weddingView" class="nav-link" @click="closeMenu">wedding</RouterLink>
           <RouterLink to="/cafe24-skins" class="nav-link" @click="closeMenu">카페24 스킨</RouterLink>
           <RouterLink to="/contact" class="nav-link" @click="closeMenu">1:1 문의</RouterLink>
           <RouterLink to="/products" class="nav-link" @click="closeMenu">상세페이지</RouterLink>

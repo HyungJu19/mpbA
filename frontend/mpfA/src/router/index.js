@@ -12,6 +12,7 @@ import LoginRequiredView from "@/views/page/LoginRequiredView.vue";
 import ProductDetail from "@/components/ProductDetail.vue";
 import ProductList from "@/components/ProductList.vue";
 import Angorani from "@/components/wedding/Angorani.vue";
+import WeddingView from "@/views/mainPage/WeddingView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,7 +31,7 @@ const router = createRouter({
     { path: "/community", component: CommunityView }, // ✅ 자유게시판
     { path: "/products", component: ProductList }, // ✅ 제품 목록
     { path: "/product/:id", component: ProductDetail, props: true }, // ✅ 제품 상세
-
+    { path: "/weddingView", component: WeddingView},
     {
       path: "/contact",
       component: ContactView,

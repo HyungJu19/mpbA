@@ -2,7 +2,7 @@
   <div class="upload-container">
     <label class="upload-box">
       <div class="image-preview">
-        <img :src="modelValue || defaultImage" alt="미리보기 이미지">
+        <img :src="imageSrc" alt="미리보기 이미지">
       </div>
 
       <div class="hover-overlay">이미지 변경</div>
@@ -13,24 +13,31 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, watch } from "vue";
 import defaultImage from "@/assets/img/d1.png";
 
 const props = defineProps({
-  modelValue: String,
+  modelValue: String, // 부모에서 전달한 값
 });
 const emit = defineEmits(["update:modelValue"]);
+const imageSrc = ref(props.modelValue || defaultImage);
 
+// ✅ 파일 선택 시 Blob URL 생성하여 사용
 const handleFileChange = (event) => {
   const file = event.target.files[0];
-  if (file && file.type.startsWith("image/")) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      emit("update:modelValue", reader.result);
-    };
-    reader.readAsDataURL(file);
+  if (!file) return;
+
+  if (file.type.startsWith("image/")) {
+    const blobUrl = URL.createObjectURL(file);
+    imageSrc.value = blobUrl;
+    emit("update:modelValue", blobUrl);
   }
 };
+
+// ✅ `modelValue`가 변경될 때마다 `imageSrc` 업데이트
+watch(() => props.modelValue, (newVal) => {
+  imageSrc.value = newVal || defaultImage;
+});
 </script>
 
 <style scoped>
@@ -67,9 +74,9 @@ const handleFileChange = (event) => {
 
 .image-preview img {
   width: 100%;
-  height: 100%;
-  max-width: 800px; /* ✅ 작은 이미지도 확대 */
-  object-fit: cover; /* ✅ 크롭하여 꽉 차게 */
+  height: auto;
+  max-width: 800px;
+  object-fit: contain;
   border-radius: 10px;
 }
 
@@ -92,23 +99,5 @@ const handleFileChange = (event) => {
 
 .upload-box:hover .hover-overlay {
   opacity: 1;
-}
-
-/* ✅ 삭제 버튼 */
-.delete-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(255, 0, 0, 0.7);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 </style>
